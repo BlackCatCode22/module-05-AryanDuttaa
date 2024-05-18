@@ -1,0 +1,129 @@
+class Animal:
+    """Represents an animal with a name, species, and age."""
+    
+    def __init__(self, name, species, age):
+        self.name = name
+        self.species = species
+        self.age = age
+
+    def __repr__(self):
+        return f"Animal(Name: {self.name}, Species: {self.species}, Age: {self.age})"
+
+def parse_animal_line(line):
+    """
+    Parses a line of animal data and returns an Animal object if valid.
+    
+    Args:
+        line (str): A line of text containing animal data in the format "name,species,age".
+    
+    Returns:
+        Animal: An Animal object if the line is valid, otherwise None.
+    """
+    parts = line.strip().split(',')
+    if len(parts) != 3:
+        print(f"Invalid line format: {line.strip()}")
+        return None
+    try:
+        name, species, age = parts
+        age = int(age)
+        return Animal(name, species, age)
+    except ValueError:
+        print(f"Invalid age value: {parts[2]} in line: {line.strip()}")
+        return None
+
+def load_animals(filename):
+    """
+    Loads animals from a file and returns a list of Animal objects.
+    
+    Args:
+        filename (str): The name of the file to read from.
+    
+    Returns:
+        list: A list of Animal objects.
+    """
+    animals = []
+    try:
+        with open(filename, 'r') as file:
+            for line in file:
+                animal = parse_animal_line(line)
+                if animal:
+                    animals.append(animal)
+    except FileNotFoundError:
+        print(f"File {filename} not found.")
+    return animals
+
+def combine_animal_lists(list1, list2):
+    """
+    Combines two lists of Animal objects.
+    
+    Args:
+        list1 (list): The first list of Animal objects.
+        list2 (list): The second list of Animal objects.
+    
+    Returns:
+        list: The combined list of Animal objects.
+    """
+    return list1 + list2
+
+def display_animals(animals):
+    """
+    Prints out the list of Animal objects.
+    
+    Args:
+        animals (list): A list of Animal objects.
+    """
+    print("All Animals:")
+    for animal in animals:
+        print(animal)
+
+def categorize_animals_by_species(animals):
+    """
+    Categorizes animals by their species.
+    
+    Args:
+        animals (list): A list of Animal objects.
+    
+    Returns:
+        dict: A dictionary with species as keys and lists of Animal objects as values.
+    """
+    species_dict = {}
+    for animal in animals:
+        if animal.species not in species_dict:
+            species_dict[animal.species] = []
+        species_dict[animal.species].append(animal)
+    return species_dict
+
+def display_animals_by_species(species_dict):
+    """
+    Prints out the animals categorized by species.
+    
+    Args:
+        species_dict (dict): A dictionary with species as keys and lists of Animal objects as values.
+    """
+    for species, animals in species_dict.items():
+        print(f"Species: {species}")
+        for animal in animals:
+            print(f"  {animal}")
+
+def main():
+    """
+    Main function to load animal data from text files, combine the data, and display it.
+    """
+    # Load animals from text files
+    arriving_animals = load_animals('arrivingAnimals.txt')
+    animal_names = load_animals('animalNames.txt')
+
+    # Combine both lists
+    all_animals = combine_animal_lists(arriving_animals, animal_names)
+
+    # Display animals
+    display_animals(all_animals)
+
+    # Categorize animals by species
+    species_dict = categorize_animals_by_species(all_animals)
+
+    # Display animals by species
+    display_animals_by_species(species_dict)
+
+if __name__ == "__main__":
+    main()
